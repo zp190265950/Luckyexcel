@@ -107,11 +107,12 @@ import { fstat } from "fs";
 export class LuckyExcel{
     static transformExcelToLucky(excelFile: File,
         callback?: (files: IuploadfileList, fs?: string) => void,
+        dataVerificationSelectCount?: number,
         errorHandler?: (err: Error) => void) {
         let handleZip:HandleZip = new HandleZip(excelFile);
         
         handleZip.unzipFile(function (files: IuploadfileList) {
-            let luckyFile = new LuckyFile(files, excelFile.name);
+            let luckyFile = new LuckyFile(files, excelFile.name, dataVerificationSelectCount);
             let luckysheetfile = luckyFile.Parse();
             let exportJson = JSON.parse(luckysheetfile);
             if (callback != undefined) {

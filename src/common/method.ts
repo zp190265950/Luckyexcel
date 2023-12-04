@@ -988,12 +988,12 @@ export function getBinaryContent (path:any, options:any) {
  * @param {string} sqref - before sequence
  * @returns {string[]}
  */
-export function getMultiSequenceToNum(sqref: string): string[] {
+export function getMultiSequenceToNum(sqref: string, count?: number): string[] {
   if (!sqref || sqref?.length <= 0) return [];
   sqref = sqref.toUpperCase();
   let sqrefRawArr = sqref.split(" ");
   let sqrefArr = sqrefRawArr.filter((e) => e && e.trim());
-  let sqrefLastArr = getSqrefRawArrFormat(sqrefArr);
+  let sqrefLastArr = getSqrefRawArrFormat(sqrefArr, count);
 
   let resArr: string[] = [];
   for (let i = 0; i < sqrefLastArr.length; i++) {
@@ -1011,7 +1011,7 @@ export function getMultiSequenceToNum(sqref: string): string[] {
  * @param {string[]} arr - formats arr
  * @returns {string[]} - after arr
  */
-export function getRegionSequence(arr: string[]): string[] {
+export function getRegionSequence(arr: string[], count?:number): string[] {
   let formatArr: string[] = [];
   
   const regEn = new RegExp(/[A-Z]+|[0-9]+/g);
@@ -1021,9 +1021,13 @@ export function getRegionSequence(arr: string[]): string[] {
   const columnMin = Math.min(...[ABCatNum(startArr[0]), ABCatNum(lastArr[0])]);
   const rowMax = Math.max(...[parseInt(startArr[1]), parseInt(lastArr[1])]);
   const rowMin = Math.min(...[parseInt(startArr[1]), parseInt(lastArr[1])]);
+  // 处理最大设置行和列
+  const countNum = count || 10000
+  const coMax = Math.min(columnMin + countNum, columnMax)
+  const roMax = Math.min(rowMin + countNum, rowMax)
   
-  for (let i = columnMin; i <= columnMax; i++) {
-    for (let j = rowMin; j <= rowMax; j++) {
+  for (let i = columnMin; i <= coMax; i++) {
+    for (let j = rowMin; j <= roMax; j++) {
       formatArr.push(`${chatatABC(i)}${j}`);
     }
   }
@@ -1039,12 +1043,12 @@ export function getRegionSequence(arr: string[]): string[] {
  * @param {string[]} arr - formats arr
  * @returns {string[]} - after arr
  */
-export function getSqrefRawArrFormat(arr: string[]): string[] {
+export function getSqrefRawArrFormat(arr: string[], count?: number): string[] {
   arr?.map((el) => {
     if (el.includes(":")) {
       let tempArr: string[] = el.split(":");
       if (tempArr?.length === 2) {
-        arr = arr.concat(getRegionSequence(tempArr));
+        arr = arr.concat(getRegionSequence(tempArr, count));
         arr.splice(arr.indexOf(el), 1);
       }
     }

@@ -22,6 +22,7 @@ export class LuckySheet extends LuckySheetBase {
     private imageList:ImageList
 
     private formulaRefList:IFormulaSI
+    private dataVerificationSelectCount:number
 
     constructor(sheetName:string, sheetId:string, sheetOrder:number,isInitialCell:boolean=false, allFileOption:any){
         //Private
@@ -36,6 +37,9 @@ export class LuckySheet extends LuckySheetBase {
         this.sheetList = allFileOption.sheetList;
         this.imageList = allFileOption.imageList;
         this.hide = allFileOption.hide;
+        console.log(allFileOption, 'allFileOption');
+        
+        this.dataVerificationSelectCount = allFileOption.dataVerificationSelectCount
 
         //Output
         this.name = sheetName;
@@ -597,12 +601,13 @@ export class LuckySheet extends LuckySheetBase {
           operator = getXmlAttibute(attrList, "operator", null);
           const peelOffData = getPeelOffX14(formulaValue);
           sqref = peelOffData?.sqref;
-          sqrefIndexArr = getMultiSequenceToNum(sqref);
+          sqrefIndexArr = getMultiSequenceToNum(sqref, this.dataVerificationSelectCount);
           valueArr = getMultiFormulaValue(peelOffData?.formula);
         } else {
           operator = getXmlAttibute(attrList, "operator", null);
           sqref = getXmlAttibute(attrList, "sqref", null);
-          sqrefIndexArr = getMultiSequenceToNum(sqref);
+          
+          sqrefIndexArr = getMultiSequenceToNum(sqref, this.dataVerificationSelectCount);
           valueArr = getMultiFormulaValue(formulaValue);
         }
 
